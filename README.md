@@ -1,8 +1,6 @@
 # WebSite
-
 # Mon site de test 🚀
-## Créée avec GitHub
-
+## Créé avec GitHub
 ---
 
 # Premier élément
