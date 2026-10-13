@@ -2,7 +2,7 @@
 # Mon site de test 🚀
 ## Créé avec GitHub
 ---
-# Publié sur : []( https://lilibonomella.github.io/WebSite/)
+# Publié sur : [Github Pages](https://lilibonomella.github.io/WebSite)
 
 ## Premier élément
 
