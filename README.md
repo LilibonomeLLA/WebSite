@@ -4,8 +4,17 @@
 > *Créé avec GitHub*
 
 ---
->[!IMPORTANT]
-> Publié sur : [Github Pages](https://lilibonomella.github.io/WebSite)
+
+<table style="border: 1px solid #8957e5; border-left: 5px solid #8957e5; border-collapse: collapse; width: 100%;">
+  <tr style="background-color: #f7f2ff;">
+    <td style="padding: 12px; font-size: 20px; vertical-align: top; width: 30px;">🟣</td>
+    <td style="padding: 12px; vertical-align: top;">
+      <strong>IMPORTANT</strong><br>
+      Publié sur : [Github Pages](https://lilibonomella.github.io/WebSite)
+    </td>
+  </tr>
+</table>
+
 
 ## Premier élément
 
@@ -25,18 +34,3 @@ Voici du contenu :
 
 
 
-<style>
-  /* Style pour corriger l'affichage du bloc IMPORTANT sur GitHub Pages */
-  blockquote {
-    border-left: 0.25em solid #8957e5 !important;
-    background-color: #f7f2ff; /* Couleur de fond claire */
-    padding: 12px 16px;
-    color: #333333;
-    border-radius: 6px;
-  }
-  
-  /* Optionnel : Rendre le texte "[!IMPORTANT]" invisible ou plus discret */
-  blockquote p strong:first-child {
-    color: #8957e5;
-  }
-</style>
