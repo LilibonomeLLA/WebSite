@@ -5,7 +5,7 @@
 
 ---
 
-<table style="border: 1px solid #8957e5; border-left: 5px solid #8957e5; border-collapse: collapse; width: 100%;">
+<table style="border: 0px solid #8957e5; border-left: 5px solid #8957e5; border-collapse: collapse; width: 100%;">
   <tr style="background-color: #f7f2ff;">
     <td style="padding: 12px; font-size: 20px; vertical-align: top; width: 30px;">🟣</td>
     <td style="padding: 12px; vertical-align: top;">
