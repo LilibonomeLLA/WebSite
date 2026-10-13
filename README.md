@@ -1,8 +1,11 @@
-# WebSite
-# Mon site de test 🚀
-## Créé avec GitHub
+> [!NOTE]
+> WebSite
+> Mon site de test 🚀
+> *Créé avec GitHub*
+
 ---
-# Publié sur : [Github Pages](https://lilibonomella.github.io/WebSite)
+[!IMPORTANT]
+> Publié sur : [Github Pages](https://lilibonomella.github.io/WebSite)
 
 ## Premier élément
 
@@ -10,7 +13,7 @@ Voici du contenu :
 - Un élément important
 - Un deuxième élément
 
-> Les trois tirets `---` servent-ils à quelque chose ?
+> Les trois tirets `---` font une ligne
 
 ---
 
