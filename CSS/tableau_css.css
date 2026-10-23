@@ -1,9 +1,9 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto:400,500,700,300,100);
 
 body {
-  background-color: #3e94ec;
+  background-color: #000000;
   font-family: "Roboto", helvetica, arial, sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   text-rendering: optimizeLegibility;
 }
@@ -30,13 +30,15 @@ div.table-title {
 /*** Table Styles **/
 
 .table-fill {
-  background: white;
+  background: grey;
   border-radius:3px;
   border-collapse: collapse;
   height: 320px;
   margin: auto;
-  max-width: 600px;
-  padding:5px;
+  /* Modification de la largeur du tableau ? */
+  /* max-width: 600px; */
+  max-width: 800px;
+  padding:2px;
   width: 100%;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
   animation: float 5s infinite;
