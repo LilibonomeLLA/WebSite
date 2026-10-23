@@ -37,7 +37,7 @@ div.table-title {
   margin: auto;
   /* Modification de la largeur du tableau ? */
   /* max-width: 600px; */
-  max-width: 1280px;
+  max-width: 100%;
   padding:2px;
   width: 100%;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
