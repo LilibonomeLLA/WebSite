@@ -33,12 +33,12 @@ div.table-title {
   background: grey;
   border-radius:3px;
   border-collapse: collapse;
-  height: 320px;
+  height: 280px;
   margin: auto;
   /* Modification de la largeur du tableau ? */
   /* max-width: 600px; */
-  max-width: 100%;
-  padding:2px;
+  max-width: 95%;
+  padding:1px;
   width: 100%;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
   animation: float 5s infinite;
