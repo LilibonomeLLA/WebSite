@@ -143,3 +143,22 @@ td.text-center {
 td.text-right {
   text-align: right;
 }
+/* paramétrage des liens */
+a:link {
+    color: #0066cc; /* Bleu ou bien utiliser : blue; */
+    text-decoration: none; /* Enlève le soulignement par défaut
+}
+
+a:visited {
+    color: purple;
+}
+
+a:hover {
+    color: orange;
+    text-decoration: underline; /* Ajoute un soulignement au survol  */
+}
+
+a:active {
+    color: red;
+}
+
