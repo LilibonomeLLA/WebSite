@@ -121,11 +121,21 @@ ${resultat.corpsHtml}
         .filter((ligne, index) => !(index === 0 && ligne.includes("-")))
         .map(ligne => ligne.split("|").slice(1, -1).map(c => c.trim()));
 
-      // 3. Tri alphabétique sur la 1ère colonne (index 0 : Catégorie)
+      // 3. Double tri alphabétique : 1ère colonne (Catégorie), puis 2ème colonne (Explication)
       lignesDonnees.sort((ligneA, ligneB) => {
         const categorieA = ligneA[0] || "";
         const categorieB = ligneB[0] || "";
-        return categorieA.localeCompare(categorieB, "fr", { sensitivity: "base" });
+        const comparaisonCategorie = categorieA.localeCompare(categorieB, "fr", { sensitivity: "base" });
+
+        // Si les catégories sont différentes, on garde l'ordre des catégories
+        if (comparaisonCategorie !== 0) {
+          return comparaisonCategorie;
+        }
+
+        // Si les catégories sont identiques, on trie par la 2ème colonne (Explication)
+        const explicationA = ligneA[1] || "";
+        const explicationB = ligneB[1] || "";
+        return explicationA.localeCompare(explicationB, "fr", { sensitivity: "base" });
       });
 
       const compteur = lignesDonnees.length;
