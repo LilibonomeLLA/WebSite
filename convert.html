@@ -27,7 +27,7 @@
       <button type="button" id="btn-convertir">Convertir et télécharger en HTML</button>
     </form>
 
-    <!-- Compteur de lignes traitées -->
+    <!-- Compteur de lignes traitées dans l'outil -->
     <p id="compteur-lignes" style="font-weight: bold; margin-top: 15px;"></p>
   </div>
 
@@ -50,10 +50,10 @@
         const contenuMarkdown = evenement.target.result;
         const resultat = convertirTableauMarkdownEnHtml(contenuMarkdown);
 
-        // 1. Affichage du compteur
+        // 1. Affichage du compteur dans la zone formulaire
         const zoneCompteur = document.getElementById("compteur-lignes");
         if (resultat.nombreLignes > 0) {
-          zoneCompteur.textContent = `Nombre de lignes traitées : ${resultat.nombreLignes}`;
+          zoneCompteur.textContent = `Nombre de lignes traitées et triées : ${resultat.nombreLignes}`;
         } else {
           zoneCompteur.textContent = "Aucune ligne de données traitée.";
         }
@@ -113,8 +113,43 @@ ${resultat.corpsHtml}
         };
       }
 
-      // Ajout de votre bannière et du titre selon votre modèle
-      let html = `<!-- Tableau => en construction -->
+      // 1. Extraction des en-têtes (première ligne)
+      const entetes = lignes[0].split("|").slice(1, -1).map(c => c.trim());
+
+      // 2. Extraction des lignes de données (en ignorant la ligne de séparation |---|---|)
+      const lignesDonnees = lignes.slice(1)
+        .filter((ligne, index) => !(index === 0 && ligne.includes("-")))
+        .map(ligne => ligne.split("|").slice(1, -1).map(c => c.trim()));
+
+      // 3. Tri alphabétique sur la 1ère colonne (index 0 : Catégorie)
+      lignesDonnees.sort((ligneA, ligneB) => {
+        const categorieA = ligneA[0] || "";
+        const categorieB = ligneB[0] || "";
+        return categorieA.localeCompare(categorieB, "fr", { sensitivity: "base" });
+      });
+
+      const compteur = lignesDonnees.length;
+
+      // 4. Construction du tableau HTML
+      let tableauHtml = `  <table class="table-fill">\n    <thead>\n      <tr>\n`;
+      entetes.forEach(entete => {
+        tableauHtml += `        <th class="text-left"><strong>${entete}</strong></th>\n`;
+      });
+      tableauHtml += `      </tr>\n    </thead>\n    <tbody class="table-hover">\n`;
+
+      lignesDonnees.forEach(cellules => {
+        tableauHtml += `      <tr>\n`;
+        cellules.forEach(cellule => {
+          const contenuFormate = formaterCellule(cellule);
+          tableauHtml += `        <td class="text-left">${contenuFormate}</td>\n`;
+        });
+        tableauHtml += `      </tr>\n`;
+      });
+
+      tableauHtml += `    </tbody>\n  </table>`;
+
+      // 5. Assemblage final avec bannière et titre dynamique
+      const htmlComplet = `<!-- Tableau => en construction -->
 <div>
   <table style="all: unset; display: revert;width: 100%; border-collapse: collapse; border: none;">
     <!--  border: 1px solid white; -->
@@ -127,39 +162,12 @@ ${resultat.corpsHtml}
 </div>
 
   <div class="table-title">
-    <h3>Liste de Favoris</h3>
+    <h3>Liste de Favoris (${compteur})</h3>
   </div>
-  <table class="table-fill">\n`;
-
-      let compteur = 0;
-
-      lignes.forEach((ligne, index) => {
-        // Ignore la ligne de séparation Markdown (ex: |---|---|---|)
-        if (index === 1 && ligne.includes("-")) return;
-
-        const cellules = ligne.split("|").slice(1, -1).map(c => c.trim());
-
-        if (index === 0) {
-          html += `    <thead>\n      <tr>\n`;
-          cellules.forEach(cellule => {
-            html += `        <th class="text-left"><strong>${cellule}</strong></th>\n`;
-          });
-          html += `      </tr>\n    </thead>\n    <tbody class="table-hover">\n`;
-        } else {
-          compteur++;
-          html += `      <tr>\n`;
-          cellules.forEach(cellule => {
-            const contenuFormate = formaterCellule(cellule);
-            html += `        <td class="text-left">${contenuFormate}</td>\n`;
-          });
-          html += `      </tr>\n`;
-        }
-      });
-
-      html += `    </tbody>\n  </table>`;
+${tableauHtml}`;
 
       return {
-        corpsHtml: html,
+        corpsHtml: htmlComplet,
         nombreLignes: compteur
       };
     }
