@@ -2,17 +2,36 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Convertisseur Markdown vers Tableau HTML</title>
+  <title>Convertisseur Markdown vers Tableau des Favoris</title>
+  <!-- Lien vers votre feuille de style pour l'aperçu -->
+  <link rel="stylesheet" href="CSS/tableau_css.css">
+  <style>
+    /* Style minimaliste uniquement pour la zone du formulaire de conversion */
+    .zone-outil {
+      background: #f4f4f4;
+      color: #333;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 800px;
+      border-radius: 5px;
+      font-family: sans-serif;
+    }
+  </style>
 </head>
 <body>
 
-  <form id="formulaire-conversion">
-    <label for="fichier-md">Sélectionnez un fichier Markdown (.md) :</label>
-    <input type="file" id="fichier-md" accept=".md,.markdown,.txt" required>
-    <button type="button" id="btn-convertir">Convertir et télécharger en HTML</button>
-  </form>
+  <div class="zone-outil">
+    <form id="formulaire-conversion">
+      <label for="fichier-md"><strong>Sélectionnez un fichier Markdown (.md) :</strong></label><br><br>
+      <input type="file" id="fichier-md" accept=".md,.markdown,.txt" required>
+      <button type="button" id="btn-convertir">Convertir et télécharger en HTML</button>
+    </form>
 
-  <h3>Aperçu du tableau généré :</h3>
+    <!-- Compteur de lignes traitées -->
+    <p id="compteur-lignes" style="font-weight: bold; margin-top: 15px;"></p>
+  </div>
+
+  <!-- Zone d'aperçu avec votre charte graphique -->
   <div id="apercu"></div>
 
   <script>
@@ -29,65 +48,120 @@
 
       lecteur.onload = function(evenement) {
         const contenuMarkdown = evenement.target.result;
-        const tableauHtml = convertirTableauMarkdownEnHtml(contenuMarkdown);
+        const resultat = convertirTableauMarkdownEnHtml(contenuMarkdown);
 
-        // 1. Afficher un aperçu sur la page
-        document.getElementById("apercu").innerHTML = tableauHtml;
+        // 1. Affichage du compteur
+        const zoneCompteur = document.getElementById("compteur-lignes");
+        if (resultat.nombreLignes > 0) {
+          zoneCompteur.textContent = `Nombre de lignes traitées : ${resultat.nombreLignes}`;
+        } else {
+          zoneCompteur.textContent = "Aucune ligne de données traitée.";
+        }
 
-        // 2. Créer une page HTML complète et lancer le téléchargement
-        const pageHtmlComplete = `<!DOCTYPE html>
-<html lang="fr">
+        // 2. Affichage de l'aperçu sur la page
+        document.getElementById("apercu").innerHTML = resultat.corpsHtml;
+
+        // 3. Génération du fichier HTML complet selon votre modèle exact
+        if (resultat.nombreLignes > 0) {
+          const pageHtmlComplete = `<html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Tableau Converti</title>
+  <meta charset="utf-8" />
+  <title>Tableau des Favoris</title>
+  <meta name="viewport" content="initial-scale=1.0; maximum-scale=1.0; width=device-width;">
+  <link rel="stylesheet" href="CSS/tableau_css.css">
 </head>
+
 <body>
-${tableauHtml}
+${resultat.corpsHtml}
 </body>
+
 </html>`;
 
-        telechargerFichier(pageHtmlComplete, "tableau-converti.html");
+          telechargerFichier(pageHtmlComplete, "favoris-convertis.html");
+        }
       };
 
       lecteur.readAsText(fichier);
     });
 
+    function formaterCellule(texte) {
+      // Transforme un lien Markdown [titre](url) en balise <a>
+      const regexLienMd = /^\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)$/;
+      const matchMd = texte.match(regexLienMd);
+      if (matchMd) {
+        return `<a href="${matchMd[2]}" target="_blank">${matchMd[1]}</a>`;
+      }
+
+      // Transforme une URL brute http:// ou https:// en balise <a>
+      if (/^https?:\/\/\S+$/.test(texte)) {
+        return `<a href="${texte}" target="_blank">${texte}</a>`;
+      }
+
+      return texte;
+    }
+
     function convertirTableauMarkdownEnHtml(markdown) {
-      // Garde uniquement les lignes contenant des barres verticales (|)
       const lignes = markdown.split("\n")
         .map(ligne => ligne.trim())
         .filter(ligne => ligne.startsWith("|") && ligne.endsWith("|"));
 
       if (lignes.length < 2) {
-        return "<p>Aucun tableau Markdown valide trouvé.</p>";
+        return {
+          corpsHtml: "<p style='text-align:center;'>Aucun tableau Markdown valide trouvé.</p>",
+          nombreLignes: 0
+        };
       }
 
-      let html = "<table border=\"1\">\n";
+      // Ajout de votre bannière et du titre selon votre modèle
+      let html = `<!-- Tableau => en construction -->
+<div>
+  <table style="all: unset; display: revert;width: 100%; border-collapse: collapse; border: none;">
+    <!--  border: 1px solid white; -->
+    <tr style="all: unset; display: revert;">
+      <td style="all: unset; display: revert;vertical-align: middle; text-align: left; ">...</td>
+      <td style="all: unset; display: revert;width: 80%;vertical-align: middle; text-align: center; "><img src="assets/under-construction-sutton-group-heritage-realty-brokerage-durham-region-real-estate-16.png" alt="En construction" style="width: 250px; height: auto;"></td>
+      <td style="all: unset; display: revert;vertical-align: middle; text-align: left; ">...</td>
+    </tr>
+  </table>
+</div>
+
+  <div class="table-title">
+    <h3>Liste de Favoris</h3>
+  </div>
+  <table class="table-fill">\n`;
+
+      let compteur = 0;
 
       lignes.forEach((ligne, index) => {
-        // Ignore la deuxième ligne qui sert de séparateur (ex: |---|---|)
+        // Ignore la ligne de séparation Markdown (ex: |---|---|---|)
         if (index === 1 && ligne.includes("-")) return;
 
-        // Découpe la ligne en cellules et retire les bords vides
         const cellules = ligne.split("|").slice(1, -1).map(c => c.trim());
 
         if (index === 0) {
-          html += "  <thead>\n    <tr>\n";
+          html += `    <thead>\n      <tr>\n`;
           cellules.forEach(cellule => {
-            html += `      <th>${cellule}</th>\n`;
+            html += `        <th class="text-left"><strong>${cellule}</strong></th>\n`;
           });
-          html += "    </tr>\n  </thead>\n  <tbody>\n";
+          html += `      </tr>\n    </thead>\n    <tbody class="table-hover">\n`;
         } else {
-          html += "    <tr>\n";
+          compteur++;
+          html += `      <tr>\n`;
           cellules.forEach(cellule => {
-            html += `      <td>${cellule}</td>\n`;
+            const contenuFormate = formaterCellule(cellule);
+            html += `        <td class="text-left">${contenuFormate}</td>\n`;
           });
-          html += "    </tr>\n";
+          html += `      </tr>\n`;
         }
       });
 
-      html += "  </tbody>\n</table>";
-      return html;
+      html += `    </tbody>\n  </table>`;
+
+      return {
+        corpsHtml: html,
+        nombreLignes: compteur
+      };
     }
 
     function telechargerFichier(contenu, nomFichier) {

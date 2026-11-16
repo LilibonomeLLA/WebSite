@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Convertisseur Markdown vers Tableau HTML</title>
+</head>
+<body>
+
+  <form id="formulaire-conversion">
+    <label for="fichier-md">Sélectionnez un fichier Markdown (.md) :</label>
+    <input type="file" id="fichier-md" accept=".md,.markdown,.txt" required>
+    <button type="button" id="btn-convertir">Convertir et télécharger en HTML</button>
+  </form>
+
+  <h3>Aperçu du tableau généré :</h3>
+  <div id="apercu"></div>
+
+  <script>
+    document.getElementById("btn-convertir").addEventListener("click", function() {
+      const input = document.getElementById("fichier-md");
+      const fichier = input.files[0];
+
+      if (!fichier) {
+        alert("Veuillez sélectionner un fichier Markdown.");
+        return;
+      }
+
+      const lecteur = new FileReader();
+
+      lecteur.onload = function(evenement) {
+        const contenuMarkdown = evenement.target.result;
+        const tableauHtml = convertirTableauMarkdownEnHtml(contenuMarkdown);
+
+        // 1. Afficher un aperçu sur la page
+        document.getElementById("apercu").innerHTML = tableauHtml;
+
+        // 2. Créer une page HTML complète et lancer le téléchargement
+        const pageHtmlComplete = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Tableau Converti</title>
+</head>
+<body>
+${tableauHtml}
+</body>
+</html>`;
+
+        telechargerFichier(pageHtmlComplete, "tableau-converti.html");
+      };
+
+      lecteur.readAsText(fichier);
+    });
+
+    function convertirTableauMarkdownEnHtml(markdown) {
+      // Garde uniquement les lignes contenant des barres verticales (|)
+      const lignes = markdown.split("\n")
+        .map(ligne => ligne.trim())
+        .filter(ligne => ligne.startsWith("|") && ligne.endsWith("|"));
+
+      if (lignes.length < 2) {
+        return "<p>Aucun tableau Markdown valide trouvé.</p>";
+      }
+
+      let html = "<table border=\"1\">\n";
+
+      lignes.forEach((ligne, index) => {
+        // Ignore la deuxième ligne qui sert de séparateur (ex: |---|---|)
+        if (index === 1 && ligne.includes("-")) return;
+
+        // Découpe la ligne en cellules et retire les bords vides
+        const cellules = ligne.split("|").slice(1, -1).map(c => c.trim());
+
+        if (index === 0) {
+          html += "  <thead>\n    <tr>\n";
+          cellules.forEach(cellule => {
+            html += `      <th>${cellule}</th>\n`;
+          });
+          html += "    </tr>\n  </thead>\n  <tbody>\n";
+        } else {
+          html += "    <tr>\n";
+          cellules.forEach(cellule => {
+            html += `      <td>${cellule}</td>\n`;
+          });
+          html += "    </tr>\n";
+        }
+      });
+
+      html += "  </tbody>\n</table>";
+      return html;
+    }
+
+    function telechargerFichier(contenu, nomFichier) {
+      const blob = new Blob([contenu], { type: "text/html;charset=utf-8" });
+      const lien = document.createElement("a");
+      lien.href = URL.createObjectURL(blob);
+      lien.download = nomFichier;
+      lien.click();
+      URL.revokeObjectURL(lien.href);
+    }
+  </script>
+
+</body>
+</html>
